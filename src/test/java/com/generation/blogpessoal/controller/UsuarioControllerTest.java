@@ -22,28 +22,28 @@ import com.generation.blogpessoal.repository.UsuarioRepository;
 import com.generation.blogpessoal.service.UsuarioService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // testa a classe e os métodos interagem
 public class UsuarioControllerTest {
 	
 	@Autowired
-	private TestRestTemplate testRestTemplate;
+	private TestRestTemplate testRestTemplate; // simula ambiente de testes
 	
-	@Autowired
+	@Autowired // chama a classe e a deixa independente
 	private UsuarioService usuarioService;
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	@BeforeAll
+	@BeforeAll // antes de tudo
 	void start() {
 		
-		usuarioRepository.deleteAll();
+		usuarioRepository.deleteAll(); // apaga o banco de dados
 		
-		usuarioService.cadastrarUsuario(new Usuario(0L, "Root", "root@root.com", "rootroot", " "));
+		usuarioService.cadastrarUsuario(new Usuario(0L, "Root", "root@root.com", "rootroot", " ")); // cadastra um usuario para teste
 	}
 	
 	@Test
-	@DisplayName("Cadastrar Um Usuário")
+	@DisplayName("Cadastrar Um Usuário") // teste o endpoint de criar um usuário
 	public void deveCriarUsuario() {
 		
 		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L,
@@ -80,11 +80,11 @@ public class UsuarioControllerTest {
 		Usuario usuarioUpdate = new Usuario(usuarioCadastrado.get().getId(),
 				"Juliana Andrews Ramos", "juliana_ramos@email.com.br", "juliana123", "-");
 		
-		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(usuarioUpdate);
+		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(usuarioUpdate); // simula o corpo da requisição (json)
 		
-		ResponseEntity<Usuario> corpoResposta = testRestTemplate
+		ResponseEntity<Usuario> corpoResposta = testRestTemplate // simula o corpo da resposta para o usuario
 				.withBasicAuth("root@root.com", "rootroot")
-				.exchange("/usuarios/atualizar", HttpMethod.PUT, corpoRequisicao, Usuario.class);
+				.exchange("/usuarios/atualizar", HttpMethod.PUT, corpoRequisicao, Usuario.class); // simula o envio da requisição
 		
 		assertEquals(HttpStatus.OK, corpoResposta.getStatusCode());
 	}
